@@ -1,0 +1,3 @@
+-r requirements.txt
+# 提交前的检查：.venv/bin/python -m ruff check .
+ruff==0.17.6

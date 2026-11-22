@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024">
+  <defs>
+    <linearGradient id="pad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#FFD657"/>
+      <stop offset="1" stop-color="#F2B92B"/>
+    </linearGradient>
+    <linearGradient id="sleeve" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#FBF8F0"/>
+      <stop offset="1" stop-color="#EDE8DB"/>
+    </linearGradient>
+    <clipPath id="tile"><rect x="100" y="100" width="824" height="824" rx="186"/></clipPath>
+  </defs>
+  <!-- 提示垫的黄色底：DJ 控制器上 Cue 垫的颜色 -->
+  <rect x="100" y="100" width="824" height="824" rx="186" fill="url(#pad)"/>
+  <g clip-path="url(#tile)">
+    <!-- 唱片投在底上的影子 -->
+    <circle cx="622" cy="536" r="252" fill="#B8860B" opacity=".28"/>
+    <!-- 唱片 -->
+    <circle cx="612" cy="512" r="252" fill="#141416"/>
+    <g fill="none" stroke="#2C2C31" stroke-width="5">
+      <circle cx="612" cy="512" r="222"/>
+      <circle cx="612" cy="512" r="192"/>
+      <circle cx="612" cy="512" r="162"/>
+      <circle cx="612" cy="512" r="132"/>
+    </g>
+    <!-- 高光弧，让盘面有一点转动感 -->
+    <path d="M612 290a222 222 0 0 1 192 111" fill="none" stroke="#4A4A52" stroke-width="5" stroke-linecap="round"/>
+    <circle cx="612" cy="512" r="92" fill="#F7C63C"/>
+    <circle cx="612" cy="512" r="15" fill="#141416"/>
+    <!-- 封套：唱片从右侧露出一半，开口处有取片缺口 -->
+    <path d="M182 290a30 30 0 0 1 30-30h400v176a76 76 0 0 0 0 152v176H212a30 30 0 0 1-30-30z" fill="#9A7208" opacity=".25" transform="translate(8 18)"/>
+    <path d="M182 290a30 30 0 0 1 30-30h400v176a76 76 0 0 0 0 152v176H212a30 30 0 0 1-30-30z" fill="url(#sleeve)"/>
+    <!-- 封套上的两道印刷线，像贴在唱片店货架上的分类标 -->
+    <rect x="232" y="640" width="150" height="20" rx="10" fill="#141416"/>
+    <rect x="232" y="682" width="96" height="20" rx="10" fill="#141416" opacity=".35"/>
+  </g>
+</svg>

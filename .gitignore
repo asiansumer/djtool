@@ -1,0 +1,25 @@
+.venv/
+__pycache__/
+*.py[cod]
+.DS_Store
+.pytest_cache/
+work/
+dist/
+build/
+.env
+.env.*
+!.env.example
+
+# 音乐和本地曲库不进入代码仓库。
+*.mp3
+*.ncm
+*.flac
+*.wav
+*.sqlite*
+*.db
+
+# 个人 Set 导出（转场表等），不进入代码仓库。
+output/
+
+# 界面方向对比页，里面嵌了专辑封面缩略图，不进入代码仓库。
+design/style-options.html

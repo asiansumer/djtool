@@ -1,0 +1,10 @@
+# Qt 的 Essentials 包已包含本项目当前需要的窗口组件。
+PySide6-Essentials==6.11.2
+PySide6-Addons==6.11.2
+shiboken6==6.11.2
+# 第二轮读取 MP3 标签与时长；固定版本便于复现。
+mutagen==1.48.1
+# 链接收歌（SoundCloud 用 yt-dlp，网易云用 requests）；NCM 解密用 pycryptodomex。
+yt-dlp[default]==2026.8.19
+requests==2.34.2
+pycryptodomex==3.23.0

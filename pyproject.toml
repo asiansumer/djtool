@@ -1,0 +1,10 @@
+# 只放工具配置。应用是从源码目录或 PyInstaller 包运行的，不作为 wheel 安装：
+# 依赖版本在 requirements.txt，版本号在 DJTOOL.spec。
+[tool.ruff]
+target-version = "py313"
+line-length = 160
+extend-exclude = ["work", "dist", "build"]
+
+[tool.ruff.lint]
+# 只查真正的错误：语法问题、未定义的名字、没用到的导入和变量。不做风格检查。
+select = ["E9", "F"]
