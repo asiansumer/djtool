@@ -7,7 +7,7 @@ DJTOOL 是一个 Mac 本地的 DJ 曲库整理与 Set 编排桌面应用：收�
 ## 工作方式
 
 - 用户（唯一使用者，也是 DJ）负责试用和产品感觉，助手负责实现。**直接在 `main` 上优化和重构，不要另开分支**（用户 2026-11-21 明确要求；`main` 是公开仓库的唯一分支）。
-- 当前目标：改善日常使用体验、重构代码。仓库已经公开在 `github.com/asiansumer/djtool`，作为作品集（2026-11-22 用户的决定：公开；MIT，署名用 GitHub 用户名；NCM 解密和第三方解析的代码一起公开；公开的历史从一个干净的首次提交开始）。公开之前的开发历史只留在本机的 `codex/mvp-intake` 和 `old-main` 两个分支上，**永远不要推送这两个分支**（里面有个人邮箱、已删除的第三方解析器副本和账号登录代码）。这个仓库的提交邮箱在本地设成了 GitHub 的隐私邮箱，不要改回去。推送是对外动作：用户说推才推，推之前跑完测试和 lint。
+- 当前目标：改善日常使用体验、重构代码。仓库已经公开在 `github.com/asiansumer/djtool`，作为作品集（2026-11-22 用户的决定：公开；MIT，署名用 GitHub 用户名；NCM 解密和第三方解析的代码一起公开；公开的历史从一个干净的首次提交开始）。公开之前的开发历史（旧界面、账号登录、第三方解析器副本）已按用户 2026-11-22 的要求从本机彻底删除，现在本机和 GitHub 上只有 `main` 这一条历史，旧代码无处可查。这个仓库的提交邮箱在本地设成了 GitHub 的隐私邮箱，不要改回去。推送是对外动作：用户说推才推，推之前跑完测试和 lint。
 - 用户对产品的定义（2026-11-22）：**扩曲库时把歌方便地收进来，NCM 转成 MP3，曲库保持整齐，Serato 里直接能用。** 他明确嫌旧界面“劣质、入口乱”，要求界面好看。新功能先问“这是不是在帮他收歌和保持整齐”，不是就不加。
 - 用户实际没用过“已整理”标记、阶段、能量、备注这些整理字段（1908 首全为空），新界面不再展示它们。
 - 只使用项目的 `.venv`，不改全局 Python。需要本机 FFmpeg（`/opt/homebrew/bin/ffmpeg`）。
@@ -32,6 +32,8 @@ QT_QPA_PLATFORM=offscreen .venv/bin/python -m unittest tests.test_library.类名
 scripts/build_app.sh
 # 冻结包离线自检：合成音频 + 临时曲库，硬拒绝联网 / 播放 / 钥匙串 / 真实 Serato 写入
 env PATH=/usr/bin:/bin QT_QPA_PLATFORM=offscreen dist/DJTOOL.app/Contents/MacOS/DJTOOL --check-runtime work/app-check
+# 用户日常用的是装在「应用程序」里的那一份：重新打包并自检通过后覆盖过去（先确认应用没在运行）
+rm -rf /Applications/DJTOOL.app && ditto dist/DJTOOL.app /Applications/DJTOOL.app
 ```
 
 提交前跑 `.venv/bin/python -m ruff check .`（只查错误，不查风格；配置在 `pyproject.toml`，ruff 在 `requirements-dev.txt`）和 `git diff --check`。没有 formatter。版本号在 `DJTOOL.spec` 的 `info_plist`（同时出现在 `docs/PROGRESS.md` / `docs/DEVELOPMENT.md` 开头）。`.github/workflows/tests.yml` 在 macOS 上跑 lint 和全部测试。
@@ -42,7 +44,7 @@ env PATH=/usr/bin:/bin QT_QPA_PLATFORM=offscreen dist/DJTOOL.app/Contents/MacOS/
 
 ## 架构
 
-所有代码都在 `djtool/` 包里：内核模块直接放在包下（`djtool/library.py` 等），界面在 `djtool/ui/`；根目录的 `main.py` 只是从源码启动的薄入口，真正的入口是 `djtool/app.py`（也可以 `python -m djtool`）。模块之间一律写 `from djtool.xxx import …` 或 `from djtool import xxx`。`pyproject.toml` 只放工具配置，应用不作为 wheel 安装（`assets/` 在包外，按仓库根目录或 PyInstaller 的 `_MEIPASS` 找）。旧界面（`window.py`、`ui.py`、`dialogs.py`、`online_ui.py`、根目录 `theme.py`）和遗留的网易云账号 / 本机直连 / 订阅 / Set 导出模块已在 0.13.0 全部删除；需要参考时看本机 `codex/mvp-intake` 分支上的 `2ce7d4c`（公开仓库里没有这段历史）。
+所有代码都在 `djtool/` 包里：内核模块直接放在包下（`djtool/library.py` 等），界面在 `djtool/ui/`；根目录的 `main.py` 只是从源码启动的薄入口，真正的入口是 `djtool/app.py`（也可以 `python -m djtool`）。模块之间一律写 `from djtool.xxx import …` 或 `from djtool import xxx`。`pyproject.toml` 只放工具配置，应用不作为 wheel 安装（`assets/` 在包外，按仓库根目录或 PyInstaller 的 `_MEIPASS` 找）。旧界面（`window.py`、`ui.py`、`dialogs.py`、`online_ui.py`、根目录 `theme.py`）和遗留的网易云账号 / 本机直连 / 订阅 / Set 导出模块已在 0.13.0 全部删除，历史也已清除，无处可查。
 
 - **界面（用户选定的“唱片墙”样式）**：`djtool/ui/main_window.py`（没有侧栏：顶部切换 收歌 / 曲库 / Sets，中间一个收歌入口，底部一整行试听栏；选中后的操作条、拖动时的 Set 目标、提示是悬浮在 `shell` 上的层，由 `_place_overlays()` 定位）、`library_view.py`（封面墙 `WallView` 和列表 `TrackTable` 共用一个模型和代理，`TrackViewMixin` 里是共用的选择与拖动）、`covers.py`（封面后台加载与缩略图）、`set_view.py`（Sets 拼图墙 + 可拖动排序的歌单）、`intake_view.py`（收歌页）、`player.py`、`dialogs.py`（曲库位置、音乐保存目录、完整歌曲信息）、`widgets.py`、`theme.py`（设计变量）。
 - **收歌调度**：`djtool/intake_queue.py`（批次队列 + 记住的歌单）、`djtool/watch.py`（收歌文件夹）。
@@ -104,7 +106,7 @@ env PATH=/usr/bin:/bin QT_QPA_PLATFORM=offscreen dist/DJTOOL.app/Contents/MacOS/
 
 ### 主题
 
-见上面“界面的几条规矩”：`djtool/ui/theme.py` 里暗色、浅色各一组同名变量。底色接近纯黑，强调色是 Cue 垫的黄色，只用于下一步动作、选中和进度；专辑封面是界面里唯一的彩色。四个候选方向的对比页在 `design/style-options.html`（未入库），用户选的是 A。
+见上面“界面的几条规矩”：`djtool/ui/theme.py` 里暗色、浅色各一组同名变量。底色接近纯黑，强调色是 Cue 垫的黄色，只用于下一步动作、选中和进度；专辑封面是界面里唯一的彩色。当初有四个候选方向，用户选的是 A（对比页已删除）。
 
 ### 打包自检
 

@@ -17,9 +17,3 @@ build/
 *.wav
 *.sqlite*
 *.db
-
-# 个人 Set 导出（转场表等），不进入代码仓库。
-output/
-
-# 界面方向对比页，里面嵌了专辑封面缩略图，不进入代码仓库。
-design/style-options.html
