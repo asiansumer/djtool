@@ -7,7 +7,7 @@ on:
 jobs:
   tests:
     # 应用只支持 macOS（Apple Silicon）；测试全部离线，用合成音频和临时曲库。
-    runs-on: macos-14
+    runs-on: macos-15
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
