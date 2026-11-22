@@ -2,6 +2,7 @@
 import hashlib
 import json
 from pathlib import Path
+import sys
 import tempfile
 import unittest
 from unittest.mock import patch
@@ -89,8 +90,8 @@ class SiteTests(unittest.TestCase):
 
     def test_ip_handshake_is_anonymous_once_and_requests_include_timestamp(self):
         client = self.client([ok(song()), ok(song()), ok(audio()), ok({'lrc': {'lyric': '[00:00]line'}})])
-        with (patch('keyring.get_password', side_effect=AssertionError('real account')),
-              patch('keyring.backends.macOS.Keyring', side_effect=AssertionError('real keychain'))):
+        # keyring 不再是依赖；把它在 sys.modules 里置空，任何 import keyring 都会直接报错。
+        with patch.dict(sys.modules, {'keyring': None}):
             name, tracks = client.listing('song', '123')
             media = client.audio(tracks[0])
             self.assertEqual(client.lyrics('123'), '[00:00]line')

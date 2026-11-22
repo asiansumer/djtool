@@ -92,8 +92,8 @@ class BackendTests(unittest.TestCase):
         self.path.write_text(json.dumps({'backend':'official','quality':'hires'}), encoding='utf-8')
         job = self.blocked(1, 'waiting_auth')
         site = Mock(return_value=object())
-        with patch.dict(sys.modules, {'djtool.netease_site':SimpleNamespace(NeteaseSiteClient=site)}), \
-                patch('keyring.backends.macOS.Keyring', side_effect=AssertionError('account read')):
+        # keyring 不再是依赖；把它在 sys.modules 里置空，任何 import keyring 都会直接报错。
+        with patch.dict(sys.modules, {'djtool.netease_site':SimpleNamespace(NeteaseSiteClient=site), 'keyring':None}):
             self.assertEqual(load_settings(self.library), {'backend':'site','quality':'hires'})
             client = create_music_client(self.library)
             self.assertIs(client, site.return_value)
